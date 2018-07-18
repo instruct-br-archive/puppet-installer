@@ -15,7 +15,7 @@ No caso de Ubuntu 12 e Debian 6 é instalada a última versão da série 4, nos 
 
 Faça o download do script
 
-    # wget https://git.mop.equinix.com.br/equinix-puppet/puppet-installer/installer.sh
+    # wget https://git.mop.equinix.com.br/equinix-puppet/puppet-installer/blob/master/installer.sh
 
 Execute o script
 
