@@ -17,7 +17,7 @@ On Ubuntu 12.04 and Debian 6 the last available package is from Puppet 4 series.
 
 Download this script (read it before!) and run it in the host, as root:
 
-    # curl https://github.com/instruct-br/puppet-installer/blob/master/installer.sh | bash -s
+    # curl https://raw.githubusercontent.com/instruct-br/puppet-installer/master/installer.sh | bash -s
 
 The script will use the hostname and domain for the certificate name.
 
