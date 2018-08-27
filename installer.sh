@@ -8,6 +8,9 @@ PUPPET_SERVER=${puppet:-'puppet'}                 # Puppet Server host
 PUPPET_SERVER_PORT=${port:-'8140'}                # Puppet Server port
 PUPPET_SERVER_CA=${ca_server:-'puppet'}           # Puppet CA Server host
 PUPPET_ENVIRONMENT=${environment:-'production'}   # Puppet environment
+PUPPET_CERTNAME=${certname:-$1}
+
+: "${PUPPET_CERTNAME?"Usage: $0 certname"} "
 
 LOGDIR="/var/log"                                 # logs folder
 LOCKFILE="/tmp/puppet.installer.lock"             # lock file
@@ -29,6 +32,7 @@ check_bash() {
     echo "Puppet Server: ${PUPPET_SERVER}"
     echo "Puppet Server port: ${PUPPET_SERVER_PORT}"
     echo "Puppet Server environment: ${PUPPET_ENVIRONMENT}"
+    echo "Puppet certname: ${PUPPET_CERTNAME}"
     echo "===== ===== ====="
   fi
 }
@@ -343,11 +347,12 @@ config_puppet_conf() {
   log "Configuring puppet.conf file"
   cat << EOF > /etc/puppetlabs/puppet/puppet.conf
 [main]
-    ca_server         = ${PUPPET_SERVER_CA}
-    server            = ${PUPPET_SERVER}
-    port              = ${PUPPET_SERVER_PORT}
+    ca_server = ${PUPPET_SERVER_CA}
+    server    = ${PUPPET_SERVER}
+    port      = ${PUPPET_SERVER_PORT}
 [agent]
-    environment       = ${PUPPET_ENVIRONMENT}
+    environment = ${PUPPET_ENVIRONMENT}
+    certname    = ${PUPPET_CERTNAME}
 EOF
 }
 
