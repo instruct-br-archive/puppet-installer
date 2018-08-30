@@ -17,9 +17,9 @@ On Ubuntu 12.04 and Debian 6 the last available package is from Puppet 4 series.
 
 Download this script (read it before!) and run it in the host, as root:
 
-    # curl https://raw.githubusercontent.com/instruct-br/puppet-installer/master/installer.sh | bash -s
+    # curl -s https://raw.githubusercontent.com/instruct-br/puppet-installer/master/installer.sh | bash -s [certname]
 
-The script will use the hostname and domain for the certificate name.
+The script will use the first parameter as the certificate name, if available, or the value from `certname` environment variable, if defined. The env variable have precedence, if both values are defined, and the script will fail if the `certname` is not defined.
 
 Some environment variables can be declared so the script will consider them during the install. This is the list:
 
@@ -27,6 +27,7 @@ Some environment variables can be declared so the script will consider them duri
 - `port`: configure the Puppet Server (and CA) port to connect. Defaults to *8140*;
 - `ca_server`: configure the Puppet Server CA to sign the certificate. Defaults to `puppet`;
 - `environment`: configure the environment the catalog will come from. Defaults to `production`.
+- `certname`: configure the host certname. This value has precedence over the command line parameter.
 
 The suggestion is to export the expected values, so the script will use them:
 
