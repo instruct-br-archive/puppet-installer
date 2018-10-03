@@ -1,6 +1,6 @@
 # Puppet Installer
 
-This project contains a BASH script to install Puppet Agent.
+This project contains a BASH script to install Puppet Agent on Linux machines, and a PowerShell script to install it on Windows machines.
 
 ## Compatibility
 
@@ -10,10 +10,13 @@ The script was tested on these operating systems:
 - Debian 6, 7, 8, and 9
 - Ubuntu 12.04, 14.04, 16.04 and 18.04
 - SLES 11 and 12
+- Windows 2008, 2012 e 2016
 
 On Ubuntu 12.04 and Debian 6 the last available package is from Puppet 4 series. All others OSes can use Puppet 5 versions.
 
 ## Using
+
+### On Linux hosts
 
 Download this script (read it before!) and run it in the host, as root:
 
@@ -36,3 +39,20 @@ The suggestion is to export the expected values, so the script will use them:
 To enable a debug while running the script it is also possible to export the variable DEBUG, with any content:
 
     # export DEBUG=true
+
+### On Windows hosts
+
+Download this script from this URL:
+
+    https://raw.githubusercontent.com/instruct-br/puppet-installer/master/installer.ps1
+
+Then run it like this, as administrator:
+
+    c:\> powershell.exe -ExecutionPolicy Unrestricted -NoLogo -NoProfile -Command "& '.\installer.ps1'"
+
+Some variables can be declared so the script will consider them during the install. This is the list:
+
+- `PuppetServer`: configure the Puppet Server to provide the catalogs. Defaults to `puppet`;
+- `PuppetCAServer`: configure the Puppet Server CA to sign the certificate. Defaults to `puppet`;
+- `PuppetEnvironment`: configure the environment the catalog will come from. Defaults to `production`.
+- `PuppetCertname`: configure the host certname. This value is obligatory, and will be prompted if not specified.
