@@ -31,6 +31,8 @@ Algumas variáveis de ambiente podem ser declaradas para que o script as conside
 - `ca_server`: configura o Puppet Server CA para assinar o certificado. Padrão é `one.mop.equinix.com.br`;
 - `environment`: configura o ambiente do cliente. Padrão é `production`.
 - `certname`: configura o certname do cliente. Este valor tem precedencia sobre o valor da linha de comando.
+- `runinterval`: configura o intervalo de execução do cliente. Padrão é 180 segundos.
+- `waitforcert`: configura o tempo de espera para assinatura do certificado do cliente. Padrão é 30 segundos.
 
 A sugestão é exportar os valores esperados para que o script use eles, desta forma:
 

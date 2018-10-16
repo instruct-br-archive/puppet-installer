@@ -8,6 +8,8 @@ PUPPET_SERVER=${puppet:-'master.mop.equinix.com.br'} # Puppet Server host
 PUPPET_SERVER_PORT=${port:-'8140'}                # Puppet Server port
 PUPPET_SERVER_CA=${ca_server:-'one.mop.equinix.com.br'} # Puppet CA Server host
 PUPPET_ENVIRONMENT=${environment:-'production'}   # Puppet environment
+PUPPET_RUN_INTERVAL=${runinterval:-'180'}   # Puppet run interval
+PUPPET_WAIT_FOR_CERT=${waitforcert:-'30'}   # Puppet wait for cert
 PUPPET_CERTNAME=${certname:-$1}
 
 : "${PUPPET_CERTNAME?"Usage: $0 certname"} "
@@ -345,15 +347,14 @@ install_agent_sles() {
 
 config_puppet_conf() {
   log "Configuring puppet.conf file"
-  cat << EOF > /etc/puppetlabs/puppet/puppet.conf
-[main]
-    ca_server = ${PUPPET_SERVER_CA}
-    server    = ${PUPPET_SERVER}
-    port      = ${PUPPET_SERVER_PORT}
-[agent]
-    environment = ${PUPPET_ENVIRONMENT}
-    certname    = ${PUPPET_CERTNAME}
-EOF
+  rm -f /etc/puppetlabs/puppet/puppet.conf
+  /opt/puppetlabs/puppet/bin/puppet config set --section main  ca_server   "${PUPPET_SERVER_CA}"
+  /opt/puppetlabs/puppet/bin/puppet config set --section main  server      "${PUPPET_SERVER}"
+  /opt/puppetlabs/puppet/bin/puppet config set --section main  port        "${PUPPET_SERVER_PORT}"
+  /opt/puppetlabs/puppet/bin/puppet config set --section agent environment "${PUPPET_ENVIRONMENT}"
+  /opt/puppetlabs/puppet/bin/puppet config set --section agent certname    "${PUPPET_CERTNAME}"
+  /opt/puppetlabs/puppet/bin/puppet config set --section agent runinterval "${PUPPET_RUN_INTERVAL}"
+  /opt/puppetlabs/puppet/bin/puppet config set --section agent waitforcert "${PUPPET_WAIT_FOR_CERT}"
 }
 
 test_connection() {
