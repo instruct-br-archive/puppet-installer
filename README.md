@@ -58,3 +58,5 @@ Algumas variáveis podem ser declaradas para que o script as considere durante a
 - `PuppetCAServer`: configura o Puppet Server CA para assinar o certificado. Padrão é `one.mop.equinix.com.br`;
 - `PuppetEnvironment`: configura o ambiente do cliente. Padrão é `production`.
 - `PuppetCertname`: configura o certname do cliente. Este valor é obrigatório, e será solicitado se não passado.
+- `PuppetRuninterval`: configura o intervalo de execução do cliente. Padrão é 180 segundos.
+- `PuppetWaitForCert`: configura o tempo de espera para assinatura do certificado do cliente. Padrão é 30 segundos.
