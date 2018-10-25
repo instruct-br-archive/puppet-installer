@@ -30,6 +30,10 @@ Source: https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master/wind
     This is the name of the Puppet environment the catalog will come from.
     This defaults to 'production'.
 
+.PARAMETER PuppetRunInterval
+    The interval, in seconds, between Puppet agent runs.
+    Defaults to 180 seconds.
+
 .PARAMETER PuppetServer
     This is the name of Puppet Server that will provide the catalogs.
     This defaults to 'puppet'.
@@ -37,6 +41,10 @@ Source: https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master/wind
 .PARAMETER PuppetVersion
     This is the version of Puppet that you want to install. If you pass this it will override the version in the MsiUrl.
     This defaults to $null.
+
+.PARAMETER PuppetWaitForCert
+    The period, in seconds, the Puppet agent will wait for the certificate to be signed.
+    Defaults to 30 secoonds.
 #>
 param(
     [string]$MsiUrl = "https://downloads.puppet.com/windows/puppet5/puppet-agent-x64-latest.msi",
@@ -48,8 +56,10 @@ param(
     )]
     [string]$PuppetCertname = $null,
     [string]$PuppetEnvironment = "production",
+    [string]$PuppetRunInterval = "180",
     [string]$PuppetServer = "puppet",
-    [string]$PuppetVersion = $null
+    [string]$PuppetVersion = $null,
+    [string]$PuppetWaitForCert = "30"
 )
 
 if ($PuppetVersion) {
@@ -98,6 +108,10 @@ if (!($PuppetInstalled)) {
         Write-Output "Installer failed."
         Exit 1
     }
+
+    echo "[agent]"                        | out-file -append -encoding ASCII C:/ProgramData/PuppetLabs/puppet/etc/puppet.conf
+    echo "runinterval=$PuppetRunInterval" | out-file -append -encoding ASCII C:/ProgramData/PuppetLabs/puppet/etc/puppet.conf
+    echo "waitforcert=$PuppetWaitForCert" | out-file -append -encoding ASCII C:/ProgramData/PuppetLabs/puppet/etc/puppet.conf
 
     # Stop the service that it autostarts
     Write-Output "Stopping Puppet service that is running by default..."
