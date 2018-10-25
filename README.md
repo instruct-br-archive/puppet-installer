@@ -58,5 +58,5 @@ Some variables can be declared so the script will consider them during the insta
 - `PuppetCAServer`: configure the Puppet Server CA to sign the certificate. Defaults to `puppet`;
 - `PuppetEnvironment`: configure the environment the catalog will come from. Defaults to `production`.
 - `PuppetCertname`: configure the host certname. This value is obligatory, and will be prompted if not specified.
-- `PuppetRuninterval`: configure the client run interval. Defaults to 180 seconds.
+- `PuppetRunInterval`: configure the client run interval. Defaults to 180 seconds.
 - `PuppetWaitForCert`: configure the wait time for certificate signing. Defaults to 30 seconds.
