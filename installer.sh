@@ -270,6 +270,8 @@ install_agent_el() {
       log "Installing connection tool"
       yum -y install $CONNECTION_PACKAGES >> "${LOGFILE}" 2>&1
     fi
+
+    echo "PUPPET_EXTRA_OPTS=--waitforcert=${PUPPET_WAIT_FOR_CERT}" >> /etc/sysconfig/puppet
     return 0
   else
     return 1
@@ -304,6 +306,8 @@ install_agent_debian_ubuntu() {
       log "Installing connection tool"
       apt-get -y install netcat-openbsd >> "${LOGFILE}" 2>&1
     fi
+
+    echo "PUPPET_EXTRA_OPTS=--waitforcert=${PUPPET_WAIT_FOR_CERT}" >> /etc/default/puppet
     return 0
   else
     return 1
@@ -339,6 +343,8 @@ install_agent_sles() {
       log "Installing connection tool"
       zypper install $CONNECTION_PACKAGES >> "${LOGFILE}" 2>&1
     fi
+
+    echo "PUPPET_EXTRA_OPTS=--waitforcert=${PUPPET_WAIT_FOR_CERT}" >> /etc/sysconfig/puppet
     return 0
   else
     return 1
