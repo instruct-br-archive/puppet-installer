@@ -442,7 +442,7 @@ while :; do
         break
       else
         if [ ! $certname ]; then
-          echo 'Error: Wrong user of options/arguments. Use --help to see the command usage.'
+          echo 'Error: Wrong use of options/arguments. Use --help to see the command usage.'
           exit 1
         else
           PUPPET_CERTNAME=$certname
