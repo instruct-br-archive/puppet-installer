@@ -45,11 +45,14 @@ Source: https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master/wind
 .PARAMETER PuppetWaitForCert
     The period, in seconds, the Puppet agent will wait for the certificate to be signed.
     Defaults to 30 secoonds.
+
+.PARAMETER Purge
+    This forces the script to remove a previous install, if present.
+    Default to false.
 #>
 param(
     [string]$MsiUrl = "https://downloads.puppet.com/windows/puppet5/puppet-agent-x64-latest.msi",
     [string]$PuppetCAServer = "puppet",
-
     [Parameter(
         Mandatory=$True,
         HelpMessage="Enter the Puppet agent certname"
@@ -59,7 +62,8 @@ param(
     [string]$PuppetRunInterval = "180",
     [string]$PuppetServer = "puppet",
     [string]$PuppetVersion = $null,
-    [string]$PuppetWaitForCert = "30"
+    [string]$PuppetWaitForCert = "30",
+    [switch]$Purge = $false
 )
 
 if ($PuppetVersion) {
@@ -73,8 +77,19 @@ try {
     Get-Command puppet | Out-Null
     $PuppetInstalled = $true
     $PuppetVersion = &puppet "--version"
-    Write-Output "Puppet $PuppetVersion is installed. This process does not ensure the exact version or at least version specified, but only that puppet is installed. Exiting..."
-    Exit 0
+    if (!($Purge)) {
+      Write-Output "Puppet $PuppetVersion is installed and the purge flag was not used. This process does not ensure the exact version or at least version specified, but only that puppet is installed. Exiting..."
+      Exit 0
+    } else {
+      Write-Output "Puppet $PuppetVersion is installed and will be removed..."
+      $Puppet = Get-WmiObject -Class Win32_Product | Where-Object {
+                    $_.Name -match "puppet"
+                }
+      $Puppet.Uninstall() | out-null
+      Write-Output "Cleaning Puppet directories..."
+      Remove-Item -Path C:\ProgramData\PuppetLabs -recurse
+      $PuppetInstalled = $false
+    }
 } catch {
     Write-Output "Puppet is not installed, continuing..."
 }

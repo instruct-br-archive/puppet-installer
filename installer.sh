@@ -19,6 +19,7 @@ LOCKFILE="/tmp/puppet.installer.lock"             # lock file
 TIMESTAMP=$(date -u +%Y%m%d.%H%M%S)               # run timestamp, UTC
 LOGFILE="$LOGDIR/puppet.installer.$TIMESTAMP.log" # standard out log file
 OS='undef'                                        # detected operating system
+PURGE=false                                       # whether to clean a previous install or not
 
 log() {
   echo -e "====>>>> $1" | tee -a "$LOGFILE"
@@ -243,9 +244,23 @@ clean_lock_file() {
   echo -e "You can check details on file $LOGFILE \\n"
 }
 
+clean_install() {
+  PACKAGE_MANAGER=$1
+  if [ -d /opt/puppetlabs ] && [ $PURGE = true ]; then
+    log "Removing old Puppet repo package"
+    $PACKAGE_MANAGER remove -y puppet.*release >> "${LOGFILE}" 2>&1
+    log "Removing old Puppet agent package"
+    $PACKAGE_MANAGER remove -y puppet-agent >> "${LOGFILE}" 2>&1
+    rm -rf /opt/puppetlabs >> "${LOGFILE}" 2>&1
+    rm -rf /etc/puppetlabs >> "${LOGFILE}" 2>&1
+  fi
+}
+
 install_agent_el() {
   if [[ "$OS" =~ ^el[567]$ ]]; then
     export LC_ALL="C"
+    clean_install "yum"
+
     yum clean all >> "${LOGFILE}" 2>&1
 
     log "Installing Puppet repo for $OS"
@@ -280,6 +295,8 @@ install_agent_el() {
 
 install_agent_debian_ubuntu() {
   if [[ "$OS" =~ ^(squeeze|wheezy|jessie|stretch|precise|trusty|xenial|bionic)$ ]]; then
+    clean_install "apt-get"
+
     log "Installing Puppet repo for $OS"
     cd /tmp || return 1
     eval "$DOWNLOADER $REPOURL" >> "${LOGFILE}" 2>&1
@@ -316,6 +333,8 @@ install_agent_debian_ubuntu() {
 
 install_agent_sles() {
   if [[ "$OS" =~ ^sles1[12]$ ]]; then
+    clean_install "zypper"
+
     log "Installing Puppet repo for $OS"
     cd /tmp && \
     eval "$DOWNLOADER -O http://yum.puppetlabs.com/RPM-GPG-KEY-puppet" && \
@@ -384,6 +403,56 @@ test_connection() {
 run_puppet_agent() {
   /opt/puppetlabs/bin/puppet agent --test
 }
+
+show_help() {
+  echo "Usage:	bash puppet-installer.sh [-h|--help] [-p|--purge certname] certname"
+  echo "Install the Puppet agent and test the connection with the Puppet Server"
+  echo " "
+  echo "  -h, --help     Print this page"
+  echo "  -p, --purge    Clean a previous Puppet install"
+  echo " "
+  echo "The script requires the certname parameter, or a \"certname\" environment variable"
+  exit 1
+}
+
+while :; do
+  case $1 in
+    -h|-\?|--help)
+      show_help
+      exit
+      ;;
+    -p|--purge)
+      PURGE=true
+      if [ "$2" ]; then
+        PUPPET_CERTNAME=$2
+        break
+      else
+        if [ ! $certname ]; then
+          echo 'Error: "--purge" requires a non-empty option argument.'
+          exit 1
+        else
+          PUPPET_CERTNAME=$certname
+          break
+        fi
+      fi
+      ;;
+    *)
+      if ! [ "$2" ] && [ "$1" ]; then
+        PUPPET_CERTNAME=$1
+        break
+      else
+        if [ ! $certname ]; then
+          echo 'Error: Wrong use of options/arguments. Use --help to see the command usage.'
+          exit 1
+        else
+          PUPPET_CERTNAME=$certname
+          break
+        fi
+      fi
+      break
+  esac
+  shift
+done
 
 check_bash
 check_root
