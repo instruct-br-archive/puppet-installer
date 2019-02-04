@@ -86,7 +86,7 @@ check_os_el7() {
     REPOURL='http://yum.puppet.com/puppet5/puppet5-release-el-7.noarch.rpm'
     CONNECTION_COMMAND='tcping'
     CONNECTION_TOOL='tcping'
-    CONNECTION_PACKAGES='epel-release tcping'
+    CONNECTION_PACKAGES='tcping'
     return 0
   else
     return 1
@@ -281,8 +281,9 @@ install_agent_el() {
     log "Installing Puppet agent"
     yum install -y puppet-agent >> "${LOGFILE}" 2>&1
 
-    if hash $CONNECTION_TOOL &> /dev/null; then
+    if ! hash $CONNECTION_TOOL &> /dev/null; then
       log "Installing connection tool"
+      yum -y install epel-release >> "${LOGFILE}" 2>&1
       yum -y install $CONNECTION_PACKAGES >> "${LOGFILE}" 2>&1
     fi
 
@@ -319,7 +320,7 @@ install_agent_debian_ubuntu() {
     apt-get install puppet-agent -y >> "${LOGFILE}" 2>&1
 
     CONNECTION_COMMAND='nc -z'
-    if hash nc &> /dev/null; then
+    if ! hash nc &> /dev/null; then
       log "Installing connection tool"
       apt-get -y install netcat-openbsd >> "${LOGFILE}" 2>&1
     fi
@@ -358,7 +359,7 @@ install_agent_sles() {
     log "Installing Puppet agent"
     zypper install --no-confirm puppet-agent >> "${LOGFILE}" 2>&1
 
-    if hash $CONNECTION_TOOL &> /dev/null; then
+    if ! hash $CONNECTION_TOOL &> /dev/null; then
       log "Installing connection tool"
       zypper install $CONNECTION_PACKAGES >> "${LOGFILE}" 2>&1
     fi
