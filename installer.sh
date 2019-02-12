@@ -4,9 +4,9 @@ IFS=$'\n\t'
 
 ### Set here your environment configuration
 
-PUPPET_SERVER=${puppet:-'puppet'}                 # Puppet Server host
+PUPPET_SERVER=${puppet:-'master.mop.equinix.com.br'} # Puppet Server host
 PUPPET_SERVER_PORT=${port:-'8140'}                # Puppet Server port
-PUPPET_SERVER_CA=${ca_server:-'puppet'}           # Puppet CA Server host
+PUPPET_SERVER_CA=${ca_server:-'one.mop.equinix.com.br'} # Puppet CA Server host
 PUPPET_ENVIRONMENT=${environment:-'production'}   # Puppet environment
 PUPPET_RUN_INTERVAL=${runinterval:-'180'}   # Puppet run interval
 PUPPET_WAIT_FOR_CERT=${waitforcert:-'30'}   # Puppet wait for cert

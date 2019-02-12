@@ -21,7 +21,7 @@ Source: https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master/wind
 
 .PARAMETER PuppetCAServer
     This is the name of Puppet Server CA that will sign the agent keys.
-    This defaults to 'puppet'.
+    This defaults to 'one.mop.equinix.com.br'.
 
 .PARAMETER PuppetCertname
     This is the name Puppet agent will present itself to the Server.
@@ -36,7 +36,7 @@ Source: https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master/wind
 
 .PARAMETER PuppetServer
     This is the name of Puppet Server that will provide the catalogs.
-    This defaults to 'puppet'.
+    This defaults to 'master.mop.equinix.com.br'.
 
 .PARAMETER PuppetVersion
     This is the version of Puppet that you want to install. If you pass this it will override the version in the MsiUrl.
@@ -48,11 +48,11 @@ Source: https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master/wind
 
 .PARAMETER Purge
     This forces the script to remove a previous install, if present.
-    Default to false.
-#>
+    Default to false.#>
 param(
     [string]$MsiUrl = "https://downloads.puppet.com/windows/puppet5/puppet-agent-x64-latest.msi",
-    [string]$PuppetCAServer = "puppet",
+    [string]$PuppetCAServer = "one.mop.equinix.com.br",
+
     [Parameter(
         Mandatory=$True,
         HelpMessage="Enter the Puppet agent certname"
@@ -60,7 +60,7 @@ param(
     [string]$PuppetCertname = $null,
     [string]$PuppetEnvironment = "production",
     [string]$PuppetRunInterval = "180",
-    [string]$PuppetServer = "puppet",
+    [string]$PuppetServer = "master.mop.equinix.com.br",
     [string]$PuppetVersion = $null,
     [string]$PuppetWaitForCert = "30",
     [switch]$Purge = $false
