@@ -77,21 +77,37 @@ try {
     Get-Command puppet | Out-Null
     $PuppetInstalled = $true
     $PuppetVersion = &puppet "--version"
-    if (!($Purge)) {
-      Write-Output "Puppet $PuppetVersion is installed and the purge flag was not used. This process does not ensure the exact version or at least version specified, but only that puppet is installed. Exiting..."
-      Exit 0
-    } else {
+} catch {
+    Write-Output "Puppet is not installed, continuing..."
+}
+
+if (!($Purge)) {
+  Write-Output -ForegroundColor Red "Puppet $PuppetVersion is installed and the purge flag was not used. This process does not ensure the exact version or at least version specified, but only that puppet is installed."
+  Exit 1
+} else {
+  if ($PuppetInstalled) {
+    try {
       Write-Output "Puppet $PuppetVersion is installed and will be removed..."
       $Puppet = Get-WmiObject -Class Win32_Product | Where-Object {
                     $_.Name -match "puppet"
                 }
       $Puppet.Uninstall() | out-null
-      Write-Output "Cleaning Puppet directories..."
-      Remove-Item -Path C:\ProgramData\PuppetLabs -recurse
       $PuppetInstalled = $false
+    } catch {
+        Write-Output -ForegroundColor Red "Failed to uninstall Puppet. Make sure you run this script as an administrator."
+        Exit 1
     }
-} catch {
-    Write-Output "Puppet is not installed, continuing..."
+  }
+  $PuppetPath = "C:\ProgramData\PuppetLabs" 
+  if (Test-Path $PuppetPath) {
+    try {
+      Write-Output "Cleaning Puppet directories..."
+      Remove-Item -Path $PuppetPath -recurse
+    } catch {
+      Write-Output -ForegroundColor Red "Failed to cliean Puppet directories. Please keep Puppet related files and directories closed to avoid conflicts."
+      Exit 1
+    }
+  }
 }
 
 if (!($PuppetInstalled)) {
@@ -120,7 +136,7 @@ if (!($PuppetInstalled)) {
     Write-Output "Installing Puppet. Running msiexec.exe $install_args"
     $process = Start-Process -FilePath msiexec.exe -ArgumentList $install_args -Wait -PassThru
     if ($process.ExitCode -ne 0) {
-        Write-Output "Installer failed."
+        Write-Output -ForegroundColor Red "Installer failed."
         Exit 1
     }
 
