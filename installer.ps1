@@ -125,7 +125,8 @@ if (!($PuppetInstalled)) {
         $MsiUrl,
         "PUPPET_MASTER_SERVER=$PuppetServer",
         "PUPPET_CA_SERVER=$PuppetCAServer",
-        "PUPPET_AGENT_ENVIRONMENT=$PuppetEnvironment"
+        "PUPPET_AGENT_ENVIRONMENT=$PuppetEnvironment",
+        "PUPPET_AGENT_STARTUP_MODE=Disabled"
     )
 
     if ($PuppetCertname) {
